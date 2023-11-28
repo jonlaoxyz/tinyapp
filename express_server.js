@@ -62,15 +62,18 @@ app.get("/hello", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
+// add /urls/new route
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
 
+// show urlDatabase short and long url
 app.get("/urls/:id", (req, res) => {
   const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
 });
 
+// Redirect any request to "/u/:id" to its longURL
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
