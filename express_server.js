@@ -29,7 +29,8 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-// POST urls - generate random string - redirect to urls and show short url
+// POST urls - generates short URL;
+// add new short URL to dbase then redirect to urls and show short url
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
@@ -55,6 +56,7 @@ app.get("/set", (req, res) => {
  });
 
  // new route handler for "/urls" and use res.render() to pass the URL data to our template
+ // urls index page
  app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
@@ -66,6 +68,7 @@ app.get("/hello", (req, res) => {
 });
 
 // Add a GET Route to Show the Form
+// New url creating page
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -81,4 +84,6 @@ app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
+
+
 
