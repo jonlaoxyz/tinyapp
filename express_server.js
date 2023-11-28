@@ -85,5 +85,10 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-
+// Delete url from database then redirect to index page
+// Add POST route for /urls/:id/delete to remove URLs
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.redirect('/urls');
+});
 
