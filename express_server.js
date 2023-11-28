@@ -13,7 +13,7 @@ const urlDatabase = {
 
 // generate random string function
 const generateRandomString = () => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let randomString = '';
   while (randomString.length < 6) {
     randomString += chars[Math.floor(Math.random() * chars.length)];
@@ -84,6 +84,15 @@ app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
+
+
+// update longURL in the database
+app.post('/urls/:shortURL', (req, res) => {
+  const shortURL = req.params.shortURL;
+  urlDatabase[shortURL] = req.body.updatedURL;
+  res.redirect(`/urls/${shortURL}`);
+});
+
 
 // Delete url from database then redirect to index page
 // Add POST route for /urls/:id/delete to remove URLs
