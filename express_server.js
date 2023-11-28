@@ -29,9 +29,11 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+// POST urls - generate random string - redirect to urls and show short url
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = req.body.longURL;
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/urls.json", (req, res) => {
@@ -63,7 +65,7 @@ app.get("/hello", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
-// add /urls/new route
+// Add a GET Route to Show the Form
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
