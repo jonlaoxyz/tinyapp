@@ -1,10 +1,23 @@
-const express = require("express");
+///////////////////////////
+// Set-up
+//////////////////////////
+
+const express = require('express');
+const morgan = require('morgan');
 const app = express();
 const PORT = 8080; // default port 8080
 
+///////////////////////////
+// Middleware
+//////////////////////////
 
+app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+
+///////////////////////////
+// "Database"
+//////////////////////////
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -24,6 +37,10 @@ const generateRandomString = () => {
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
+
+///////////////////////////
+// Listener
+//////////////////////////
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
