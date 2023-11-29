@@ -18,6 +18,9 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
+    <div class="mr-3">
+      Logged in as: <%= username %>
+    </div>
     <form action="/login" method="POST">
       <div>
         <input type="text" name="username" placeholder="Username">

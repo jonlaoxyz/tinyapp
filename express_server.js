@@ -6,6 +6,8 @@ const express = require('express');
 const morgan = require('morgan');
 const app = express();
 const PORT = 8080; // default port 8080
+const cookieParser = require('cookie-parser');
+
 
 ///////////////////////////
 // Middleware
@@ -14,6 +16,7 @@ const PORT = 8080; // default port 8080
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
+app.use(cookieParser());
 
 ///////////////////////////
 // "Database"
@@ -66,16 +69,19 @@ app.get("/hello", (req, res) => {
 app.get("/set", (req, res) => {
   const a = 1;
   res.send(`a = ${a}`);
- });
+});
  
- app.get("/fetch", (req, res) => {
+app.get("/fetch", (req, res) => {
   res.send(`a = ${a}`);
- });
+});
 
- // new route handler for "/urls" and use res.render() to pass the URL data to our template
- // urls index page
- app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+// new route handler for "/urls" and use res.render() to pass the URL data to our template
+// urls index page
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"], // route the username
+    urls: urlDatabase
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -87,12 +93,18 @@ app.get("/hello", (req, res) => {
 // Add a GET Route to Show the Form
 // New url creating page
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { username: req.cookies['username']};
+  res.render("urls_new", templateVars);
 });
+// new url creation page
 
 // show urlDatabase short and long url
 app.get("/urls/:id", (req, res) => {
-  const templateVars = { id: req.params.id, longURL: urlDatabase[req.params.id]};
+  const templateVars = {
+    id: req.params.id,
+    longURL: urlDatabase[req.params.id],
+    username: req.cookies["username"],
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -122,4 +134,4 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
-})
+});
