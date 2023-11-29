@@ -141,3 +141,13 @@ app.post('/logout', (req, res) => {
   res.clearCookie('username', req.body.username);
   res.redirect('/urls');
 });
+
+// add endpoint for GET /register
+app.get("/register", (req, res) => {
+  const templateVars = {
+    id: req.params.id,
+    longURL: urlDatabase[req.params.id],
+    username: req.cookies["username"],
+  };
+  res.render("urls_register", templateVars);
+});
