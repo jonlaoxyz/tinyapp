@@ -135,3 +135,9 @@ app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
 });
+
+// add endpoint to handle POST to /logout
+app.post('/logout', (req, res) => {
+  res.clearCookie('username', req.body.username);
+  res.redirect('/urls');
+});
