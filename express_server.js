@@ -22,10 +22,26 @@ app.use(cookieParser());
 // "Database"
 //////////////////////////
 
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
+
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk",
+  },
+};
+
+
 
 // generate random string function
 const generateRandomString = () => {
@@ -150,4 +166,16 @@ app.get("/register", (req, res) => {
     username: req.cookies["username"],
   };
   res.render("urls_register", templateVars);
+});
+
+// register page function
+app.post("/register", (req, res) => {
+  const userID = generateRandomString();
+  users[userID] = {
+    userID,
+    email: req.body.email,
+    password: req.body.password
+  }
+res.cookie('user_id', userID);
+res.redirect('/urls');
 });
