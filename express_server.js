@@ -147,9 +147,15 @@ app.get("/urls/:id", (req, res) => {
 });
 
 // Redirect any request to "/u/:id" to its longURL
+// Check if :id is available - if not - return 404.
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  res.redirect(longURL);
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.statusCode = 404;
+    res.send("<h1>404 Not Found!</h1><p>This short URL is invalid.</p>")
+  }
 });
 
 // show short/long version - short URL page
@@ -179,8 +185,13 @@ app.post('/urls/:shortURL', (req, res) => {
 // Delete url from database then redirect to index page
 // Add POST route for /urls/:id/delete to remove URLs
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect('/urls');
+  if (req.cookies["user_id"]) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect('/urls');
+  } else {
+    res.statusCode = 403;
+    res.send("<h1>403 Fobidden</h1><p>Not logged in.</p>")
+  }
 });
 
 // app.get to login page
