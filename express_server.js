@@ -23,22 +23,33 @@ app.use(cookieParser());
 //////////////////////////
 
 
+// const urlDatabase = {
+//   "b2xVn2": "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com",
+// };
+
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  // b6UTxQ: {
+  //   longURL: "https://www.tsn.ca",
+  //   userID: "aJ48lW",
+  // },
+  // i3BoGr: {
+  //   longURL: "https://www.google.ca",
+  //   userID: "aJ48lW",
+  // },
 };
 
 const users = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
-  },
+  // aJ48lW: {
+  //   id: "aJ48lW",
+  //   email: "a@a.com",
+  //   password: "a",
+  // },
+  // aJ48lW: {
+  //   id: "aJ48lW",
+  //   email: "b@b.com",
+  //   password: "b",
+  // },
 };
 
 /////////////////////////
@@ -67,20 +78,16 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-///////////////////////////
-// Listener
-//////////////////////////
-
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
-});
 
 // POST urls - generates short URL;
 // add new short URL to dbase then redirect to urls and show short url
 app.post("/urls", (req, res) => {
   if (req.cookies["user_id"]) {
     const shortURL = generateRandomString();
-    urlDatabase[shortURL] = req.body.longURL;
+    urlDatabase[shortURL] = {
+      longURL: req.body.longURL,
+      userID: req.cookies["user_id"]
+    };
     res.redirect(`/urls/${shortURL}`);
   } else {
     // prevent non-logged in users from posting changes to database
@@ -140,7 +147,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     user: users[req.cookies["user_id"]],
   };
   res.render("urls_show", templateVars);
@@ -149,9 +156,9 @@ app.get("/urls/:id", (req, res) => {
 // Redirect any request to "/u/:id" to its longURL
 // Check if :id is available - if not - return 404.
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id].longURL;
   if (longURL) {
-    res.redirect(longURL);
+    res.redirect(urlDatabase[req.params.shortURL].longURL);
   } else {
     res.statusCode = 404;
     res.send("<h1>404 Not Found!</h1><p>This short URL is invalid.</p>")
@@ -162,7 +169,7 @@ app.get("/u/:id", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies["user_id"]]};
     res.render("urls_show", templateVars);
   });
@@ -172,7 +179,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post('/urls/:shortURL', (req, res) => {
   if (req.cookies["user_id"]) {
     const shortURL = req.params.shortURL;
-    urlDatabase[shortURL] = req.body.updatedURL;
+    urlDatabase[shortURL].longURL = req.body.updatedURL;
     res.redirect(`/urls/${shortURL}`);
   } else {
     res.statusCode = 403;
@@ -263,4 +270,12 @@ app.post("/register", (req, res) => {
     res.statusCode = 400;
     res.send("<h1>400 Bad Request</h1><p>Please don't leave the email and password fields empty.")
   }
+});
+
+///////////////////////////
+// Listener
+//////////////////////////
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });
