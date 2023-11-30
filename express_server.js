@@ -78,9 +78,15 @@ app.listen(PORT, () => {
 // POST urls - generates short URL;
 // add new short URL to dbase then redirect to urls and show short url
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
-  res.redirect(`/urls/${shortURL}`);
+  if (req.cookies["user_id"]) {
+    const shortURL = generateRandomString();
+    urlDatabase[shortURL] = req.body.longURL;
+    res.redirect(`/urls/${shortURL}`);
+  } else {
+    // prevent non-logged in users from posting changes to database
+    res.statusCode = 403;
+    res.send("<h1>403 Fobidden</h1><p>Not logged in.</p>")
+  }
 });
 
 app.get("/urls.json", (req, res) => {
@@ -117,14 +123,18 @@ app.get("/hello", (req, res) => {
 });
 
 // Add a GET Route to Show the Form
-// New url creating page
-app.get("/urls/new", (req, res) => {
-  const templateVars = {
-    user: users[req.cookies['user_id']]
-  };
-  res.render("urls_new", templateVars);
-});
 // new url creation page
+app.get("/urls/new", (req, res) => {
+  if (req.cookies["user_id"]) {
+    const templateVars = {
+      user: users[req.cookies['user_id']]
+    };
+    res.render("urls_new", templateVars);
+  } else {
+    res.redirect("/login");
+  }
+});
+
 
 // show urlDatabase short and long url
 app.get("/urls/:id", (req, res) => {
@@ -154,24 +164,34 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // update longURL in the database
 app.post('/urls/:shortURL', (req, res) => {
-  const shortURL = req.params.shortURL;
-  urlDatabase[shortURL] = req.body.updatedURL;
-  res.redirect(`/urls/${shortURL}`);
+  if (req.cookies["user_id"]) {
+    const shortURL = req.params.shortURL;
+    urlDatabase[shortURL] = req.body.updatedURL;
+    res.redirect(`/urls/${shortURL}`);
+  } else {
+    res.statusCode = 403;
+    res.send("<h1>403 Fobidden</h1><p>Not logged in.</p>")
+  }
 });
+
 
 
 // Delete url from database then redirect to index page
 // Add POST route for /urls/:id/delete to remove URLs
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls');
 });
 
 // app.get to login page
 app.get("/login", (req, res) => {
-  const templateVars = {
-    user: users[req.cookies["user_id"]]};
-    res.render("urls_login", templateVars);
+  if (req.cookies["user_id"]) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      user: users[req.cookies["user_id"]]};
+      res.render("urls_login", templateVars);
+  }
   });
 
 
@@ -200,12 +220,16 @@ app.post('/logout', (req, res) => {
 
 // add endpoint for GET /register
 app.get("/register", (req, res) => {
-  const templateVars = {
-    id: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    user: users[req.cookies["user_id"]],
-  };
-  res.render("urls_register", templateVars);
+  if (req.cookies["user_id"]) {
+    res.redirect("/urls");
+  } else {
+    const templateVars = {
+      id: req.params.id,
+      longURL: urlDatabase[req.params.id],
+      user: users[req.cookies["user_id"]],
+    };
+    res.render("urls_register", templateVars);
+  }
 });
 
 // register page function
