@@ -41,8 +41,9 @@ const users = {
   },
 };
 
-
-
+/////////////////////////
+// Helpers
+////////////////////////
 // generate random string function
 const generateRandomString = () => {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -95,7 +96,7 @@ app.get("/fetch", (req, res) => {
 // urls index page
 app.get("/urls", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"], // route the username
+    user: users[req.cookies["user_id"]], // route the username
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
@@ -109,7 +110,9 @@ app.get("/hello", (req, res) => {
 // Add a GET Route to Show the Form
 // New url creating page
 app.get("/urls/new", (req, res) => {
-  const templateVars = { username: req.cookies['username']};
+  const templateVars = {
+    user: users[req.cookies['user_id']]
+  };
   res.render("urls_new", templateVars);
 });
 // new url creation page
@@ -119,7 +122,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"],
+    user: users[req.cookies["user_id"]],
   };
   res.render("urls_show", templateVars);
 });
@@ -129,6 +132,15 @@ app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
   res.redirect(longURL);
 });
+
+// show short/long version - short URL page
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+    user: users[req.cookies["user_id"]]};
+    res.render("urls_show", templateVars);
+  });
 
 
 // update longURL in the database
@@ -163,7 +175,7 @@ app.get("/register", (req, res) => {
   const templateVars = {
     id: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"],
+    user: users[req.cookies["user_id"]],
   };
   res.render("urls_register", templateVars);
 });

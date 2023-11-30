@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="mr-3"> <!-- add login/logout condition -->
-      <% if (!username) { %>
+      <% if (!user) { %>
       <form action ="/login" method="POST">
         <div>
           <input type="text" name="username" placeholder="Username">
@@ -29,7 +29,7 @@
     <% } else { %>
     <form action="/logout" method="POST">
       <div>
-        Logged in as: <b><%= username %></b> <button type="submit">Logout</button>
+        Logged in as: <b><%= user.email %></b> <button type="submit">Logout</button>
       </div>
     </form>
     <% } %>
