@@ -74,6 +74,16 @@ const getUserByEmail = (email, data) => {
   return undefined;
 }
 
+const urlsForUser = (id) => {
+  let userUrls = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userUrls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userUrls;
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -117,10 +127,11 @@ app.get("/fetch", (req, res) => {
 // new route handler for "/urls" and use res.render() to pass the URL data to our template
 // urls index page
 app.get("/urls", (req, res) => {
+  const userID = req.cookies["user_id"];
+  const userUrls = urlsForUser(userID);
   const templateVars = {
-    user: users[req.cookies["user_id"]], // route the user_id
-    urls: urlDatabase
-  };
+    urls: userUrls,
+    user: users[userID] }; // route the user_id
   res.render("urls_index", templateVars);
 });
 
@@ -167,10 +178,15 @@ app.get("/u/:id", (req, res) => {
 
 // show short/long version - short URL page
 app.get("/urls/:shortURL", (req, res) => {
+  const userID = req.cookies["user_id"];
+  const userUrls = urlsForUser(userID);
   const templateVars = {
+    urls: userUrls,
+    user: users[userID],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[req.cookies["user_id"]]};
+    user: users[req.cookies["user_id"]]
+  };
     res.render("urls_show", templateVars);
   });
 
