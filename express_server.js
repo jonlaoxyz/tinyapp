@@ -54,13 +54,13 @@ const generateRandomString = () => {
   return randomString;
 };
 
-const getUserByEmail = (email) => {
-  for (const user in users) {
-    if (users[user].email === email) {
-      return true;
+const getUserByEmail = (email, data) => {
+  for (const user in data) {
+    if (data[user].email === email) {
+      return data[user];
     }
   }
-  return false;
+  return undefined;
 }
 
 app.get("/", (req, res) => {
@@ -177,8 +177,19 @@ app.get("/login", (req, res) => {
 
 // add endpoint to handle POST to /login
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  const user = getUserByEmail(req.body.email, users);
+  if (user) {
+    if (req.body.password === user.password) {
+      res.cookie("user_id", user.userID);
+      res.redirect("/urls");
+    } else {
+      res.statusCode = 403;
+      res.send("<h1>403 Fobidden</h1><p>Wrong password.</p>")
+    }
+  } else {
+    res.statusCode = 403;
+    res.send("<h1>403 Forbidden</h1><p>Email address not registered.</p>")
+  }
 });
 
 // add endpoint to handle POST to /logout
@@ -200,7 +211,7 @@ app.get("/register", (req, res) => {
 // register page function
 app.post("/register", (req, res) => {
   if (req.body.email && req.body.password) {
-    if (!getUserByEmail(req.body.email)) {
+    if (!getUserByEmail(req.body.email, users)) {
       const userID = generateRandomString();
       users[userID] = {
         userID,
