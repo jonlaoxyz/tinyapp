@@ -167,6 +167,14 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+// app.get to login page
+app.get("/login", (req, res) => {
+  const templateVars = {
+    user: users[req.cookies["user_id"]]};
+    res.render("urls_login", templateVars);
+  });
+
+
 // add endpoint to handle POST to /login
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
