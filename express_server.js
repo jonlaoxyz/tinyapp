@@ -54,6 +54,15 @@ const generateRandomString = () => {
   return randomString;
 };
 
+const getUserByEmail = (email) => {
+  for (const user in users) {
+    if (users[user].email === email) {
+      return true;
+    }
+  }
+  return false;
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -182,12 +191,22 @@ app.get("/register", (req, res) => {
 
 // register page function
 app.post("/register", (req, res) => {
-  const userID = generateRandomString();
-  users[userID] = {
-    userID,
-    email: req.body.email,
-    password: req.body.password
+  if (req.body.email && req.body.password) {
+    if (!getUserByEmail(req.body.email)) {
+      const userID = generateRandomString();
+      users[userID] = {
+        userID,
+        email: req.body.email,
+        password: req.body.password
+      }
+      res.cookie('user_id', userID);
+      res.redirect('/urls');
+    } else {
+      res.statusCode = 400;
+      res.send("<h1>400 Bad Request</h1><p>Email already exists</p>")
+    }
+  } else {
+    res.statusCode = 400;
+    res.send("<h1>400 Bad Request</h1><p>Please don't leave the email and password fields empty.")
   }
-res.cookie('user_id', userID);
-res.redirect('/urls');
 });
