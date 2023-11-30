@@ -105,7 +105,7 @@ app.get("/fetch", (req, res) => {
 // urls index page
 app.get("/urls", (req, res) => {
   const templateVars = {
-    user: users[req.cookies["user_id"]], // route the username
+    user: users[req.cookies["user_id"]], // route the user_id
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
@@ -194,8 +194,8 @@ app.post('/login', (req, res) => {
 
 // add endpoint to handle POST to /logout
 app.post('/logout', (req, res) => {
-  res.clearCookie('username', req.body.username);
-  res.redirect('/urls');
+  res.clearCookie('user_id');
+  res.redirect('/login');
 });
 
 // add endpoint for GET /register
