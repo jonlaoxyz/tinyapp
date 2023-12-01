@@ -77,27 +77,9 @@ const generateRandomString = () => {
   return randomString;
 };
 
-const getUserByEmail = (email, data) => {
-  for (const user in data) {
-    if (data[user].email === email) {
-      return data[user];
-    }
-  }
-  return undefined;
-}
 
+const { getUserByEmail } = require('./helpers');
 
-const findUserWithEmail = (email) => {
-  for (const userId in users) {
-    const user = users[userId];
-
-    if (user.email === email) {
-      // found user!
-      return user;
-    }
-  }
-  return null;
-}
 
 const urlsForUser = (id) => {
   let userUrls = {};
