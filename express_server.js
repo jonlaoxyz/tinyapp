@@ -60,16 +60,6 @@ const urlsForUser = (id) => {
   return userUrls;
 };
 
-// JSON database checks
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/users.json", (req, res) => {
-  res.json(users);
-});
-
-
 // Routing
 
 // if user is logged in - show URLs. if NOT - show login page.
@@ -116,11 +106,6 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-// app.get("/hello", (req, res) => {
-//   const templateVars = { greeting: "Hello World!"};
-//   res.render("hello_world", templateVars);
-// });
-
 // Add a GET Route to Show the Form
 // new url creation page
 app.get("/urls/new", (req, res) => {
@@ -131,17 +116,6 @@ app.get("/urls/new", (req, res) => {
     res.redirect("/login");
   }
 });
-
-
-/* // show urlDatabase short and long url
-app.get("/urls/:id", (req, res) => {
-  const templateVars = {
-    id: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
-    user: users[req.cookies["user_id"]],
-  };
-  res.render("urls_show", templateVars);
-}); */
 
 // Redirect any request to "/u/:id" to its longURL
 // Check if :id is available - if not - return 404.
