@@ -4,10 +4,16 @@
 
 const express = require('express');
 const morgan = require('morgan');
+// const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session')
+const bcrypt = require('bcryptjs');
+
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require('cookie-parser');
 
+// Configuration
+
+app.set("view engine", "ejs");
 
 ///////////////////////////
 // Middleware
@@ -15,8 +21,14 @@ const cookieParser = require('cookie-parser');
 
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
-app.set("view engine", "ejs");
-app.use(cookieParser());
+// app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ["Purple", "Super Dog", "House cat"],
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
 
 ///////////////////////////
 // "Database"
@@ -74,6 +86,19 @@ const getUserByEmail = (email, data) => {
   return undefined;
 }
 
+
+const findUserWithEmail = (email) => {
+  for (const userId in users) {
+    const user = users[userId];
+
+    if (user.email === email) {
+      // found user!
+      return user;
+    }
+  }
+  return null;
+}
+
 const urlsForUser = (id) => {
   let userUrls = {};
   for (const shortURL in urlDatabase) {
@@ -88,6 +113,13 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
+app.get("/users.json", (req, res) => {
+  res.json(users);
+});
 
 // POST urls - generates short URL;
 // add new short URL to dbase then redirect to urls and show short url
@@ -106,9 +138,6 @@ app.post("/urls", (req, res) => {
   }
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
@@ -274,7 +303,7 @@ app.post("/register", (req, res) => {
       users[userID] = {
         userID,
         email: req.body.email,
-        password: req.body.password
+        password: bcrypt.hashSync(req.body.password, 10)
       }
       res.cookie('user_id', userID);
       res.redirect('/urls');
