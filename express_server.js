@@ -77,7 +77,7 @@ app.get("/", (req, res) => {
   if (req.session.userID) {
     res.redirect("/urls");
   }
-    res.redirect("/login");
+  res.redirect("/login");
 });
 
 
@@ -125,7 +125,7 @@ app.get("/urls", (req, res) => {
 // new url creation page
 app.get("/urls/new", (req, res) => {
   if (req.session.userID) {
-    const templateVars = {user: users[req.session.userID]}
+    const templateVars = {user: users[req.session.userID]};
     res.render("urls_new", templateVars);
   } else {
     res.redirect("/login");
@@ -213,12 +213,12 @@ app.get("/login", (req, res) => {
 app.post('/login', (req, res) => {
   const user = getUserByEmail(req.body.email, users);
   if (user && bcrypt.compareSync(req.body.password, user.password)) {
-      req.session.userID = user.userID;
-      res.redirect('/urls');
-    } else {
-      res.statusCode = 401;
-      res.send("<h1>401 Unathorized</h1><p>Wrong username or password.</p>");
-    }
+    req.session.userID = user.userID;
+    res.redirect('/urls');
+  } else {
+    res.statusCode = 401;
+    res.send("<h1>401 Unathorized</h1><p>Wrong username or password.</p>");
+  }
 });
 
 // add endpoint to handle POST to /logout
@@ -237,7 +237,7 @@ app.get("/register", (req, res) => {
   const templateVars = {
     user: users[req.session.userID]
   };
-    res.render("urls_register", templateVars);
+  res.render("urls_register", templateVars);
 });
 
 // register page function
@@ -250,7 +250,7 @@ app.post("/register", (req, res) => {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 10)
       };
-      req.session.user_id = userID;
+      req.session.userId = userID;
       res.redirect('/login');
     } else {
       res.statusCode = 400;
