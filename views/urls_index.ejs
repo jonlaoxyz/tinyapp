@@ -19,7 +19,7 @@
   <body>
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
-      <h1>My URLs</h1>
+      <h2>My URLs</h2>
       <% if (user) {%>
       <table class="table">
         <thead>
@@ -42,8 +42,8 @@
         </tbody>
       </table>
       <% } else { %> 
-        <h2>You must be logged in to view your short URLs.</h2>
-        <h3>Register to create new short URLs.</h3>
+        <h4>You must be logged in to view your short URLs.</h4>
+        <h4>Register to create new short URLs.</h4>
       <% } %>
     </main>
     <!-- Bootstrap JS -->

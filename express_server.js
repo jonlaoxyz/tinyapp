@@ -225,13 +225,13 @@ app.post('/login', (req, res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('session.sig');
   res.clearCookie('session');
-  res.redirect('/urls');
+  res.redirect('/login');
 });
 
 // add endpoint for GET /register
 app.get("/register", (req, res) => {
   if (req.session.userID) {
-    res.redirect("/urls");
+    res.redirect("/login");
     return;
   }
   const templateVars = {
@@ -251,7 +251,7 @@ app.post("/register", (req, res) => {
         password: bcrypt.hashSync(req.body.password, 10)
       };
       req.session.user_id = userID;
-      res.redirect('/urls');
+      res.redirect('/login');
     } else {
       res.statusCode = 400;
       res.send("<h1>400 Bad Request</h1><p>Cannot create new account. Email address already registered.</p>");

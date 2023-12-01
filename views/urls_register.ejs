@@ -18,14 +18,14 @@
   </head>
   <body>
     <%- include('partials/_header') %>
-    <main style="margin: 1em;">
+    <main style="margin: 2em;">
       <h3>Register & Create an account</h3>
         <form action="/register" method="POST">
-          <label for="email">Email address</label>
-          <input type="email" name="email" placeholder="Enter Email">
-          <label for="password">Password</label>
-          <input type="password" name="password" placeholder="Enter Password">
-          <button type="submit">Register</button>
+          <div><label for="email">Email address</label></div>
+          <div><input type="email" name="email" placeholder="Enter Email"></div>
+          <div class="mt-3"><label for="password">Password</label></div
+          <div><input type="password" name="password" placeholder="Enter Password"></div>
+          <div><button type="submit" class="btn btn-dark my-3">Register</button></div>
         </form>
     </main>
     <!-- Bootstrap JS -->
