@@ -156,7 +156,7 @@ app.get("/fetch", (req, res) => {
 // new route handler for "/urls" and use res.render() to pass the URL data to our template
 // urls index page
 app.get("/urls", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.userID;
   const userUrls = urlsForUser(userID);
   const templateVars = {
     urls: userUrls,
@@ -172,7 +172,7 @@ app.get("/hello", (req, res) => {
 // Add a GET Route to Show the Form
 // new url creation page
 app.get("/urls/new", (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.userID) {
     const templateVars = {
       user: users[req.cookies['user_id']]
     };
@@ -207,7 +207,7 @@ app.get("/u/:id", (req, res) => {
 
 // show short/long version - short URL page
 app.get("/urls/:shortURL", (req, res) => {
-  const userID = req.cookies["user_id"];
+  const userID = req.session.userID;
   const userUrls = urlsForUser(userID);
   const templateVars = {
     urls: userUrls,
@@ -222,7 +222,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 // update longURL in the database
 app.post('/urls/:shortURL', (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.userID) {
     const shortURL = req.params.shortURL;
     urlDatabase[shortURL].longURL = req.body.updatedURL;
     res.redirect(`/urls/${shortURL}`);
@@ -237,7 +237,7 @@ app.post('/urls/:shortURL', (req, res) => {
 // Delete url from database then redirect to index page
 // Add POST route for /urls/:id/delete to remove URLs
 app.post("/urls/:shortURL/delete", (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.userID) {
     delete urlDatabase[req.params.shortURL];
     res.redirect('/urls');
   } else {
@@ -248,11 +248,12 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // app.get to login page
 app.get("/login", (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.userID) {
     res.redirect("/urls");
   } else {
     const templateVars = {
-      user: users[req.cookies["user_id"]]};
+      user: users[req.session.userID]
+    };
       res.render("urls_login", templateVars);
   }
   });
@@ -283,13 +284,13 @@ app.post('/logout', (req, res) => {
 
 // add endpoint for GET /register
 app.get("/register", (req, res) => {
-  if (req.cookies["user_id"]) {
+  if (req.session.userID) {
     res.redirect("/urls");
   } else {
     const templateVars = {
       id: req.params.id,
       longURL: urlDatabase[req.params.id],
-      user: users[req.cookies["user_id"]],
+      user: users[req.session.userID],
     };
     res.render("urls_register", templateVars);
   }
@@ -305,7 +306,7 @@ app.post("/register", (req, res) => {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 10)
       }
-      res.cookie('user_id', userID);
+      req.session.user_id = userID;
       res.redirect('/urls');
     } else {
       res.statusCode = 400;
